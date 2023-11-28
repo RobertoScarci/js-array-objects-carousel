@@ -22,46 +22,47 @@ const images = [
     }
 ];
 
-const listElement = document.querySelector('div.scroll');
+const slidesWrapperEl = document.querySelector('div.scroll');
 
-const beforeButton = document.querySelector('.prev');
-const afterButton = document.querySelector('.next');
+let activeIndex = 0;
 
-let activeImage = 0;
+images.forEach((element, index) => {
+    const classesForActiveSlide = (index === activeIndex) ? 'active' : '';
+    slidesWrapperEl.innerHTML += generateNewSlide(element.image, element.title, element.text, index, classesForActiveSlide);
 
+})
 
-createImage(images, listElement, activeImage);
+document.querySelector('.prev').addEventListener('click', function(){
+    if (--activeIndex < 0) activeIndex = images.length - 1;
+    changeToSlide(activeIndex);
+})
 
-beforeButton.addEventListener("click", () => {
-
-    activeImage == 0 ? activeImage = images.length : 0;
-
-    activeImage -= 1;
-
-    createImage(images, listElement, activeImage);
-});
-
-afterButton.addEventListener("click", () => {
-
-    activeImage == images.length - 1 ? activeImage = -1 : 0;
-
-    activeImage += 1;
-
-    createImage(images, listElement, activeImage);
-});
+document.querySelector('.next').addEventListener('click', function(){
+    if (++activeIndex >= images.length) activeIndex = 0;
+    changeToSlide(activeIndex);
+})
 
 
 // ==== Functions ====
 
-function createImage(image, output, activeImage) {
-    output.innerHTML += `
-    <div>
-        <img src="${image[activeImage].image}" alt="${image[activeImage].title} game">
-        <div class="info">
-            <h2>${image[activeImage].title}</h2>
-            <p>${image[activeImage].text}</p>
+function generateNewSlide(imgSrc, title, description, index, classesToAdd ){
+    return `<div class="my-carousel-item ${classesToAdd}" carousel-item="${index}">
+        <img class="img-fluid" src="${imgSrc}" alt="${title}'s picture">
+        <div class="item-description px-3">
+            <h2>
+                ${title}
+            </h2>
+            <p>
+                ${description}
+            </p>
         </div>
-    </div>`
+    </div>`;
+}
+
+function changeToSlide(newIndex){
+    document.querySelector('div.my-carousel-item.active').classList.remove('active');
+
+    document.querySelector('div.my-carousel-item[carousel-item="' + newIndex +'"]').classList.add('active');
 }
 
 
